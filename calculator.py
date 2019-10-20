@@ -4,7 +4,7 @@ import math
 class Parser:
     def parse(self, expr):
         tokens = []
-        functions = ['sin', 'cos'] 
+        functions = ['sin', 'cos', 'exp'] 
         currentlyNumber = False
         currentlyFrac = False
         currentlyFunc = False
@@ -52,7 +52,7 @@ class Parser:
             if isinstance(prev_token, str):
                 if prev_token == '(' and tokens[i] == ')':
                     return False
-                if prev_token in "(+-*/^sc":
+                if prev_token in "(+-*/^sce":
                     if tokens[i] == '+':
                         tokens[i] = '#'
                     elif tokens[i] == '-':
@@ -79,22 +79,22 @@ class Calculator:
                     return False
                 else:
                     operator.pop()
-            elif token in "sc":
+            elif token in "sce":
                 operator.append(token)
             elif token in "#_":
-                while operator and operator[-1] in "#_sc":
+                while operator and operator[-1] in "#_sce":
                     out.append(operator.pop())
                 operator.append(token)
             elif token == '^':    
-                while operator and operator[-1] in "#_^sc":
+                while operator and operator[-1] in "#_^sce":
                     out.append(operator.pop())
                 operator.append(token)
             elif token in "*/":    
-                while operator and operator[-1] in "#_^*/sc":
+                while operator and operator[-1] in "#_^*/sce":
                     out.append(operator.pop())
                 operator.append(token)
             elif token in "+-":    
-                while operator and operator[-1] in "#_^*/+-sc":
+                while operator and operator[-1] in "#_^*/+-sce":
                     out.append(operator.pop())
                 operator.append(token)     
         while operator:
@@ -115,7 +115,7 @@ class Calculator:
                 return False
             if isinstance(token, float):
                 stack.append(token)
-            elif token in "#_sc":
+            elif token in "#_sce":
                 if stack:
                     first = stack.pop()
                 else:
@@ -155,5 +155,7 @@ class Calculator:
             return math.sin(first)
         elif operation == 'c':
             return math.cos(first)
+        elif operation == 'e':
+            return math.exp(first)
         else:
             return False
