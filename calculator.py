@@ -39,7 +39,7 @@ class Parser:
                 else:
                     currentlyFunc = True
                     func = c
-            elif c in "+-*/()":
+            elif c in "+-*/^()":
                 tokens.append(c)
             elif c == ' ':
                 continue
@@ -52,7 +52,7 @@ class Parser:
             if isinstance(prev_token, str):
                 if prev_token == '(' and tokens[i] == ')':
                     return False
-                if prev_token in "(+-*/sc":
+                if prev_token in "(+-*/^sc":
                     if tokens[i] == '+':
                         tokens[i] = '#'
                     elif tokens[i] == '-':
@@ -85,12 +85,16 @@ class Calculator:
                 while operator and operator[-1] in "#_sc":
                     out.append(operator.pop())
                 operator.append(token)
+            elif token == '^':    
+                while operator and operator[-1] in "#_^sc":
+                    out.append(operator.pop())
+                operator.append(token)
             elif token in "*/":    
-                while operator and operator[-1] in "#_*/sc":
+                while operator and operator[-1] in "#_^*/sc":
                     out.append(operator.pop())
                 operator.append(token)
             elif token in "+-":    
-                while operator and operator[-1] in "#_*/+-sc":
+                while operator and operator[-1] in "#_^*/+-sc":
                     out.append(operator.pop())
                 operator.append(token)     
         while operator:
@@ -141,6 +145,8 @@ class Calculator:
             return first * second
         elif operation == '/':
             return first / second
+        elif operation == '^':
+            return math.pow(first, second)
         elif operation == '#':
             return first
         elif operation == '_':
