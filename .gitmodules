@@ -1,0 +1,6 @@
+[submodule "Sub1"]
+	path = Sub1
+	url = https://github.com/somov7/Sub1.git
+[submodule "Sub2"]
+	path = Sub2
+	url = https://github.com/somov7/Sub2.git
