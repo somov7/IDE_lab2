@@ -5,9 +5,15 @@ class Parser:
     def parse(self, expr):
         tokens = []
         currentlyNumber = False
+        currentlyFrac = False
         number = 0
         for c in expr:
-            if '0' <= c and c <= '9':
+            if ('0' <= c and c <= '9') or c == '.':
+                if c == '.':
+                    if currentlyFrac is False:
+                        currentlyFrac = True
+                    else:
+                        return False
                 if currentlyNumber:
                     number += c
                 else:
@@ -16,7 +22,8 @@ class Parser:
                 continue
             elif currentlyNumber:
                 currentlyNumber = False
-                tokens.append(int(number, 10))
+                currentlyFrac = False
+                tokens.append(float(number))
             if c in "+-*/()":
                 tokens.append(c)
             elif c == ' ':
@@ -24,7 +31,7 @@ class Parser:
             else:
                 return False
         if currentlyNumber:
-            tokens.append(int(number, 10))
+            tokens.append(float(number))
         prev_token = '('
         for i in range(len(tokens)):
             if isinstance(prev_token, str):
@@ -36,7 +43,7 @@ class Parser:
                     elif tokens[i] == '-':
                         tokens[i] = '_'
                 elif prev_token in "#_":
-                    if tokens[i] != "(" and not isinstance(tokens[i], int):
+                    if tokens[i] != "(" and not isinstance(tokens[i], float):
                         return False
             prev_token = tokens[i]
         return tokens
@@ -47,7 +54,7 @@ class Calculator:
         out = []
         operator = []
         for token in tokens:
-            if isinstance(token, int):
+            if isinstance(token, float):
                 out.append(token)
             elif token == '(':
                 operator.append(token)
@@ -86,7 +93,7 @@ class Calculator:
         for token in queue:
             if token is False:
                 return False
-            if isinstance(token, int):
+            if isinstance(token, float):
                 stack.append(token)
             elif token in "#_":
                 if stack:
@@ -104,7 +111,7 @@ class Calculator:
                 else:
                     return False
                 stack.append(self.evaluate(token, first, second))
-        if len(stack) != 1 or not isinstance(stack[0], int):
+        if len(stack) != 1 or not isinstance(stack[0], float):
             return False
         else:
             return stack[0]
@@ -117,7 +124,7 @@ class Calculator:
         elif operation == '*':
             return first * second
         elif operation == '/':
-            return first // second
+            return first / second
         elif operation == '#':
             return first
         elif operation == '_':
